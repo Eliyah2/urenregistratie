@@ -1,0 +1,66 @@
+import csv
+import os
+from datetime import datetime
+
+def valideer_datum(datum):
+    """Controleer of de ingevoerde datum het juiste formaat heeft (YYYY-MM-DD)."""
+    try:
+        datetime.strptime(datum, "%Y-%m-%d")
+        return True
+    except ValueError:
+        return False
+
+def valideer_tijd(tijd):
+    """Controleer of de ingevoerde tijd het juiste formaat heeft (HH:MM)."""
+    try:
+        datetime.strptime(tijd, "%H:%M")
+        return True
+    except ValueError:
+        return False
+
+def vraag_gegevens():
+    """Vraag de gebruiker om gegevens met validatie."""
+    naam = input("Voer je naam in: ").strip()
+    while True:
+        datum = input("Voer de datum in (YYYY-MM-DD): ").strip()
+        if valideer_datum(datum):
+            break
+        print("❌ Ongeldige datum. Probeer opnieuw (YYYY-MM-DD).")
+    while True:
+        begin_tijd = input("Voer de begintijd in (HH:MM): ").strip()
+        if valideer_tijd(begin_tijd):
+            break
+        print("❌ Ongeldige tijd. Probeer opnieuw (HH:MM).")
+    while True:
+        eind_tijd = input("Voer de eindtijd in (HH:MM): ").strip()
+        if valideer_tijd(eind_tijd):
+            break
+        print("❌ Ongeldige tijd. Probeer opnieuw (HH:MM).")
+    taak = input("Omschrijf de taak: ").strip()
+    return [naam, datum, begin_tijd, eind_tijd, taak]
+
+def schrijf_naar_csv(data, bestand="urenregistratie.csv"):
+    """Schrijf gegevens naar een CSV-bestand."""
+    bestaat = os.path.exists(bestand)
+    with open(bestand, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        if not bestaat:
+            writer.writerow(["Naam", "Datum", "Begintijd", "Eindtijd", "Taakomschrijving"])
+        writer.writerow(data)
+    print(f"✅ Gegevens succesvol opgeslagen in {bestand}.")
+
+def main():
+    """De hoofdprogramma-functie."""
+    print("\nWelkom bij het Urenregistratie Systeem!\n")
+    while True:
+        gegevens = vraag_gegevens()
+        schrijf_naar_csv(gegevens)
+        doorgaan = input("Wil je meer uren registreren? (ja/nee): ").strip().lower()
+        if doorgaan != "ja":
+            break
+    print("\nBedankt voor het gebruiken van het Urenregistratiesysteem!")
+
+if __name__ == "__main__":
+    main()
+
+
